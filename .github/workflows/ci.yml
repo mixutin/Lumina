@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux build and packages
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Tauri Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xdg-utils \
+            rpm
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Generate application icons
+        run: npm run icons
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Check Rust backend
+        run: npm run check:rust
+
+      - name: Build Linux bundles
+        run: npm run build:linux
+
+      - name: Collect bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          find src-tauri/target/release/bundle -type f \( \
+            -name '*.AppImage' -o \
+            -name '*.deb' -o \
+            -name '*.rpm' \
+          \) -exec cp {} artifacts/ \;
+          test -n "$(find artifacts -maxdepth 1 -type f -print -quit)"
+          (cd artifacts && sha256sum * > SHA256SUMS.txt)
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumina-linux-x86_64
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 14
