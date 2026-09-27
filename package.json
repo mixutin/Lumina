@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "icons": "tauri icon site/assets/lumina-mark.svg",
+    "check:rust": "cargo check --manifest-path src-tauri/Cargo.toml",
+    "build:linux": "tauri build --bundles deb,rpm,appimage",
     "tauri": "tauri"
   },
   "dependencies": {
