@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#07080d" />
+  <meta name="description" content="Lumina is an open-source, Steam-free Linux launcher experience for Zenless Zone Zero using the official HoYoPlay launcher through UMU/Proton." />
+  <meta name="keywords" content="Zenless Zone Zero Linux, ZZZ Linux, HoYoPlay Linux, UMU launcher, Proton launcher, Linux gaming, Lumina" />
+  <meta name="author" content="Lumina contributors" />
+  <meta property="og:title" content="Lumina — Zenless on Linux, without Steam" />
+  <meta property="og:description" content="A beautiful Steam-free Linux launcher around the official HoYoPlay client." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mixutin.github.io/Lumina/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://mixutin.github.io/Lumina/" />
+  <link rel="icon" href="./assets/lumina-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>Lumina — Zenless on Linux, without Steam</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Lumina",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Linux",
+      "url": "https://mixutin.github.io/Lumina/",
+      "downloadUrl": "https://github.com/mixutin/Lumina/releases",
+      "softwareVersion": "0.1.0-alpha",
+      "description": "A Steam-free Linux launcher experience for Zenless Zone Zero using the official HoYoPlay launcher through UMU/Proton.",
+      "license": "https://opensource.org/license/mit"
+    }
+  </script>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="aurora aurora-a"></div>
+  <div class="aurora aurora-b"></div>
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Lumina home">
+      <img src="./assets/lumina-mark.svg" alt="" />
+      <span>LUMINA</span>
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#architecture">How it works</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="https://github.com/mixutin/Lumina">GitHub</a>
+    </nav>
+    <a class="header-cta" href="https://github.com/mixutin/Lumina/releases">Downloads <span>↗</span></a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="pill"><span class="pulse"></span> OPEN SOURCE · LINUX FIRST · PRE-ALPHA</div>
+        <h1>
+          <span class="solid">Enter New Eridu.</span>
+          <span class="outline">Keep Linux.</span>
+        </h1>
+        <p class="lead">
+          Lumina is a Steam-free Linux launcher experience for Zenless Zone Zero.
+          It keeps the official HoYoPlay client in control while managing the
+          compatibility layer around it.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/mixutin/Lumina/releases">
+            <span>Download Lumina</span>
+            <span class="arrow">↗</span>
+          </a>
+          <a class="button button-ghost" href="https://github.com/mixutin/Lumina">
+            <span class="github-dot">◉</span>
+            View source
+          </a>
+        </div>
+        <div class="package-row" aria-label="Planned package formats">
+          <span>APPIMAGE</span>
+          <span>DEB</span>
+          <span>RPM</span>
+          <span>TARBALL</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="city-lines"></div>
+        <div class="portal">
+          <div class="portal-ring ring-1"></div>
+          <div class="portal-ring ring-2"></div>
+          <div class="portal-ring ring-3"></div>
+          <div class="portal-ring ring-4"></div>
+          <div class="portal-center">
+            <img src="./assets/lumina-mark.svg" alt="" />
+          </div>
+          <div class="portal-label label-a">UMU / PROTON</div>
+          <div class="portal-label label-b">HOYOPLAY</div>
+          <div class="portal-label label-c">LINUX</div>
+        </div>
+        <div class="floating-card card-status">
+          <span class="mini-label">RUNTIME</span>
+          <strong><i></i> Connected</strong>
+        </div>
+        <div class="floating-card card-build">
+          <span class="mini-label">MODE</span>
+          <strong>Steam-free</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="Project principles">
+      <div class="ticker-track">
+        <span>OFFICIAL LAUNCHER</span><i>✦</i>
+        <span>MANAGED RUNTIME</span><i>✦</i>
+        <span>NO STEAM REQUIRED</span><i>✦</i>
+        <span>DISTRO FRIENDLY</span><i>✦</i>
+        <span>OPEN SOURCE</span><i>✦</i>
+        <span>DIAGNOSTIC FIRST</span><i>✦</i>
+        <span>OFFICIAL LAUNCHER</span><i>✦</i>
+        <span>MANAGED RUNTIME</span><i>✦</i>
+        <span>NO STEAM REQUIRED</span><i>✦</i>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="section-heading">
+        <p class="eyebrow">01 / THE EXPERIENCE</p>
+        <h2>Linux compatibility<br />without the ritual.</h2>
+        <p>Lumina is being designed around sane defaults, recoverable state and visibility into what the launcher is actually doing.</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card feature-card-large">
+          <div class="feature-icon">
+            <span class="orbit-icon"><b></b><i></i></span>
+          </div>
+          <p class="eyebrow">MANAGED RUNTIME</p>
+          <h3>UMU + Proton,<br />without Steam.</h3>
+          <p>Lumina uses a dedicated compatibility environment and keeps runtime details out of your way until you actually need them.</p>
+          <div class="terminal">
+            <div class="terminal-head"><span></span><span></span><span></span><b>lumina / runtime</b></div>
+            <div class="terminal-body">
+              <p><i>›</i> host <strong>linux / x86_64</strong></p>
+              <p><i>›</i> vulkan <strong class="green">ready</strong></p>
+              <p><i>›</i> umu <strong class="green">available</strong></p>
+              <p><i>›</i> prefix <strong>managed</strong></p>
+            </div>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <div class="index">A</div>
+          <p class="eyebrow">OFFICIAL SOFTWARE</p>
+          <h3>HoYoPlay stays in control.</h3>
+          <p>Lumina does not redistribute the game, replace updates or patch protected game and anti-cheat files.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="index">B</div>
+          <p class="eyebrow">RECOVERABLE</p>
+          <h3>Logs you can actually use.</h3>
+          <p>Runtime health, prefix state and launch logs are surfaced directly instead of hiding failures behind a spinner.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="index">C</div>
+          <p class="eyebrow">DISTRIBUTION</p>
+          <h3>Built for the Linux ecosystem.</h3>
+          <p>Automated releases target portable AppImage plus Debian- and RPM-family packages, with more formats planned.</p>
+        </article>
+
+        <article class="feature-card accent-card">
+          <div class="accent-grid"></div>
+          <p class="eyebrow">DESIGN</p>
+          <h3>Looks like an app.<br />Not a setup script.</h3>
+          <p>Native desktop shell. Fast Rust backend. Clean diagnostics. A UI designed for Linux gaming rather than terminal archaeology.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section architecture-section" id="architecture">
+      <div class="section-heading compact">
+        <p class="eyebrow">02 / HOW IT WORKS</p>
+        <h2>Keep the game official.<br />Wrap the environment.</h2>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipeline-node">
+          <span>01</span>
+          <strong>Lumina</strong>
+          <small>Native desktop UI</small>
+        </div>
+        <div class="connector"><i></i><b>manages</b></div>
+        <div class="pipeline-node">
+          <span>02</span>
+          <strong>UMU + Proton</strong>
+          <small>Compatibility runtime</small>
+        </div>
+        <div class="connector"><i></i><b>runs</b></div>
+        <div class="pipeline-node">
+          <span>03</span>
+          <strong>HoYoPlay</strong>
+          <small>Official launcher</small>
+        </div>
+        <div class="connector"><i></i><b>launches</b></div>
+        <div class="pipeline-node active">
+          <span>04</span>
+          <strong>Zenless</strong>
+          <small>Official game files</small>
+        </div>
+      </div>
+
+      <div class="architecture-note">
+        <span class="lock">◇</span>
+        <p><strong>One hard rule:</strong> Lumina does not disable or bypass anti-cheat. Compatibility work belongs around the official software, not inside protected game components.</p>
+      </div>
+    </section>
+
+    <section class="section roadmap-section" id="roadmap">
+      <div class="section-heading">
+        <p class="eyebrow">03 / ROADMAP</p>
+        <h2>From proof of concept<br />to daily driver.</h2>
+      </div>
+
+      <div class="roadmap">
+        <article class="milestone current">
+          <div class="milestone-meta"><span>00</span><b>NOW</b></div>
+          <h3>Foundation</h3>
+          <ul>
+            <li class="done">Project identity</li>
+            <li class="done">Tauri desktop shell</li>
+            <li class="done">Rust diagnostics backend</li>
+            <li class="done">Automated Linux packages</li>
+            <li class="done">GitHub Pages</li>
+          </ul>
+        </article>
+        <article class="milestone">
+          <div class="milestone-meta"><span>01</span><b>NEXT</b></div>
+          <h3>First launch</h3>
+          <ul>
+            <li>Managed UMU bootstrap</li>
+            <li>HoYoPlay installer flow</li>
+            <li>Prefix initialization</li>
+            <li>Launch + log capture</li>
+          </ul>
+        </article>
+        <article class="milestone">
+          <div class="milestone-meta"><span>02</span><b>THEN</b></div>
+          <h3>Daily driver</h3>
+          <ul>
+            <li>Runtime repair</li>
+            <li>GPU-specific diagnostics</li>
+            <li>Game detection</li>
+            <li>Launch profiles</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="cta-glow"></div>
+      <p class="eyebrow">WELCOME TO LUMINA</p>
+      <h2>Linux gaming should feel<br />this effortless.</h2>
+      <p>Follow development, test early builds and help shape the launcher.</p>
+      <div class="hero-actions centered">
+        <a class="button button-primary" href="https://github.com/mixutin/Lumina">
+          Star on GitHub <span class="arrow">↗</span>
+        </a>
+        <a class="button button-ghost" href="https://github.com/mixutin/Lumina/issues">Report an issue</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="wordmark" href="#top">
+      <img src="./assets/lumina-mark.svg" alt="" />
+      <span>LUMINA</span>
+    </a>
+    <p>Independent open-source project. Not affiliated with or endorsed by HoYoverse.</p>
+    <div>
+      <a href="https://github.com/mixutin/Lumina">GitHub</a>
+      <a href="https://github.com/mixutin/Lumina/blob/main/LICENSE">MIT License</a>
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+</body>
+</html>
