@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Lumina",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "identifier": "dev.lumina.launcher",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -30,8 +30,11 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["deb", "rpm", "appimage"],
     "category": "Game",
+    "homepage": "https://mixutin.github.io/Lumina/",
+    "license": "MIT",
+    "licenseFile": "../LICENSE",
     "shortDescription": "Steam-free Linux launcher for the official HoYoPlay client",
     "longDescription": "Lumina manages a Linux compatibility environment for the official HoYoPlay launcher without requiring Steam."
   }
