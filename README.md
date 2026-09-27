@@ -72,7 +72,7 @@ Lumina does **not** redistribute Zenless Zone Zero, HoYoPlay, Proton, or UMU.
 - [x] Tauri + React architecture
 - [x] GitHub Pages foundation
 - [ ] Local development bootstrap
-- [ ] Runtime state model
+- [x] Runtime state model
 
 ### Milestone 1 — First launch
 - [ ] Detect host architecture and desktop session
