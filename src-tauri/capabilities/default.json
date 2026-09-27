@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Default Lumina desktop capability",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
