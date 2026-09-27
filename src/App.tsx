@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  bootstrapUmu,
   defaultStatus,
   getSystemStatus,
   launchHoyoplay,
@@ -66,7 +67,7 @@ function HealthCard({
 export default function App() {
   const [status, setStatus] = useState<RuntimeStatus>(defaultStatus);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<"prepare" | "launch" | null>(null);
+  const [busy, setBusy] = useState<"prepare" | "runtime" | "launch" | null>(null);
   const [message, setMessage] = useState("Checking your Linux environment…");
 
   const refresh = useCallback(async () => {
@@ -91,6 +92,14 @@ export default function App() {
     return Math.round((checks.filter(Boolean).length / checks.length) * 100);
   }, [status]);
 
+  const umuDetail = status.umuManaged
+    ? status.umuVersion
+      ? `Managed ${status.umuVersion}`
+      : "Managed"
+    : status.umuAvailable
+      ? "System install"
+      : "Not installed";
+
   async function prepare() {
     setBusy("prepare");
     try {
@@ -99,6 +108,25 @@ export default function App() {
       await refresh();
     } catch (error) {
       setMessage(`Preparation failed: ${String(error)}`);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function installRuntime() {
+    setBusy("runtime");
+    setMessage("Resolving and verifying the official UMU release…");
+
+    try {
+      const result = await bootstrapUmu();
+      setMessage(
+        result.updated
+          ? `Managed UMU ${result.version} installed and verified.`
+          : `Managed UMU ${result.version} is already current and verified.`,
+      );
+      await refresh();
+    } catch (error) {
+      setMessage(`Runtime setup failed: ${String(error)}`);
     } finally {
       setBusy(null);
     }
@@ -163,11 +191,18 @@ export default function App() {
               keeping updates official and compatibility understandable.
             </p>
             <div className="hero-actions">
-              <button className="primary-button" onClick={() => void launch()} disabled={!status.hoyoplayInstalled || busy !== null}>
+              <button className="primary-button" onClick={() => void launch()} disabled={!status.hoyoplayInstalled || !status.umuAvailable || busy !== null}>
                 <Icon name="play" /> {busy === "launch" ? "Launching…" : "Launch HoYoPlay"}
               </button>
+              <button className="secondary-button" onClick={() => void installRuntime()} disabled={busy !== null}>
+                {busy === "runtime"
+                  ? "Installing runtime…"
+                  : status.umuManaged
+                    ? "Check UMU Runtime"
+                    : "Install UMU Runtime"}
+              </button>
               <button className="secondary-button" onClick={() => void prepare()} disabled={busy !== null}>
-                {busy === "prepare" ? "Preparing…" : "Prepare Lumina"}
+                {busy === "prepare" ? "Preparing…" : "Prepare Folders"}
               </button>
             </div>
           </div>
@@ -194,7 +229,7 @@ export default function App() {
 
             <div className="health-list">
               <HealthCard eyebrow="GRAPHICS" title="Vulkan" detail={status.vulkanAvailable ? "Detected" : "Needs check"} tone={status.vulkanAvailable ? "good" : "warn"} />
-              <HealthCard eyebrow="RUNTIME" title="UMU" detail={status.umuAvailable ? "Available" : "Not found"} tone={status.umuAvailable ? "good" : "warn"} />
+              <HealthCard eyebrow="RUNTIME" title="UMU" detail={umuDetail} tone={status.umuManaged ? "good" : status.umuAvailable ? "warn" : "muted"} />
               <HealthCard eyebrow="LAUNCHER" title="HoYoPlay" detail={status.hoyoplayInstalled ? "Installed" : "Not installed"} tone={status.hoyoplayInstalled ? "good" : "muted"} />
             </div>
           </section>
@@ -210,15 +245,16 @@ export default function App() {
               <div><dt>Platform</dt><dd>{status.platform}</dd></div>
               <div><dt>Architecture</dt><dd>{status.arch}</dd></div>
               <div><dt>Session</dt><dd>{status.session}</dd></div>
+              <div><dt>Python</dt><dd>{status.pythonVersion ? `${status.pythonVersion}${status.pythonCompatible ? "" : " · unsupported"}` : "Not found"}</dd></div>
               <div><dt>Data directory</dt><dd className="mono">{status.dataDir}</dd></div>
             </dl>
           </section>
         </div>
 
         <section className="activity-bar">
-          <span className={`activity-light ${loading ? "pulse" : ""}`} />
+          <span className={`activity-light ${loading || busy === "runtime" ? "pulse" : ""}`} />
           <div>
-            <strong>{loading ? "Scanning…" : "Lumina status"}</strong>
+            <strong>{loading ? "Scanning…" : busy === "runtime" ? "Installing runtime…" : "Lumina status"}</strong>
             <p>{message}</p>
           </div>
         </section>

@@ -6,8 +6,18 @@ export type RuntimeStatus = {
   session: string;
   dataDir: string;
   umuAvailable: boolean;
+  umuManaged: boolean;
+  umuVersion: string | null;
+  pythonVersion: string | null;
+  pythonCompatible: boolean;
   hoyoplayInstalled: boolean;
   vulkanAvailable: boolean;
+};
+
+export type BootstrapResult = {
+  version: string;
+  path: string;
+  updated: boolean;
 };
 
 export const defaultStatus: RuntimeStatus = {
@@ -16,6 +26,10 @@ export const defaultStatus: RuntimeStatus = {
   session: "Detecting",
   dataDir: "~/.local/share/lumina",
   umuAvailable: false,
+  umuManaged: false,
+  umuVersion: null,
+  pythonVersion: null,
+  pythonCompatible: false,
   hoyoplayInstalled: false,
   vulkanAvailable: false,
 };
@@ -26,6 +40,10 @@ export async function getSystemStatus(): Promise<RuntimeStatus> {
 
 export async function prepareLumina(): Promise<string> {
   return invoke<string>("ensure_layout");
+}
+
+export async function bootstrapUmu(): Promise<BootstrapResult> {
+  return invoke<BootstrapResult>("bootstrap_umu");
 }
 
 export async function launchHoyoplay(): Promise<string> {
