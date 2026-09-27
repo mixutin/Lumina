@@ -1,0 +1,144 @@
+name: Release Linux builds
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing v-prefixed tag to publish"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish Linux packages
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Resolve release tag
+        id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+
+          if [[ "$TAG" != v* ]]; then
+            echo "Release tag must start with v" >&2
+            exit 1
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.meta.outputs.tag }}
+
+      - name: Verify version matches tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED="${{ steps.meta.outputs.version }}"
+          TAURI_VERSION="$(node -p "require('./src-tauri/tauri.conf.json').version")"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          CARGO_VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' src-tauri/Cargo.toml | head -n1)"
+
+          printf 'tag=%s tauri=%s package=%s cargo=%s\n' "$EXPECTED" "$TAURI_VERSION" "$PACKAGE_VERSION" "$CARGO_VERSION"
+
+          test "$EXPECTED" = "$TAURI_VERSION"
+          test "$EXPECTED" = "$PACKAGE_VERSION"
+          test "$EXPECTED" = "$CARGO_VERSION"
+
+      - name: Install Tauri Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xdg-utils \
+            rpm
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Generate application icons
+        run: npm run icons
+
+      - name: Build release bundles
+        run: npm run build:linux
+
+      - name: Assemble release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.meta.outputs.version }}"
+          OUT="$GITHUB_WORKSPACE/release-assets"
+          mkdir -p "$OUT"
+
+          find src-tauri/target/release/bundle -type f \( \
+            -name '*.AppImage' -o \
+            -name '*.deb' -o \
+            -name '*.rpm' \
+          \) -exec cp {} "$OUT/" \;
+
+          PORTABLE="Lumina-${VERSION}-linux-x86_64"
+          mkdir -p "$PORTABLE"
+          install -m755 src-tauri/target/release/lumina "$PORTABLE/lumina"
+          cp README.md LICENSE "$PORTABLE/"
+          tar -czf "$OUT/${PORTABLE}.tar.gz" "$PORTABLE"
+          rm -rf "$PORTABLE"
+
+          test -n "$(find "$OUT" -maxdepth 1 -type f -print -quit)"
+          (cd "$OUT" && sha256sum * > SHA256SUMS.txt)
+
+          echo "Release assets:"
+          ls -lh "$OUT"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: Lumina ${{ steps.meta.outputs.version }}
+          generate_release_notes: true
+          prerelease: ${{ contains(steps.meta.outputs.version, '-') }}
+          body: |
+            ## Linux downloads
+
+            - **AppImage** — recommended portable build for most x86_64 Linux distributions.
+            - **.deb** — Debian, Ubuntu, Linux Mint and derivatives.
+            - **.rpm** — Fedora, openSUSE and RPM-family distributions.
+            - **.tar.gz** — unpackaged x86_64 binary for advanced users. System WebKitGTK/GTK runtime dependencies still apply.
+            - **SHA256SUMS.txt** — integrity hashes for every release asset.
+
+            Lumina is pre-alpha software. This release does not modify or bypass game anti-cheat components and does not redistribute HoYoPlay or Zenless Zone Zero.
+          files: release-assets/*
+          fail_on_unmatched_files: true
